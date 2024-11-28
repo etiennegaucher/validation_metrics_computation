@@ -6,6 +6,10 @@ import numpy as np
 import nibabel as nib
 from typing import Tuple, List
 from PIL import Image
+Image.MAX_IMAGE_PIXELS=146070120
+import tifffile as tif
+import matplotlib.pyplot as plt
+
 
 
 def get_fold_from_file(filename, fold_number):
@@ -68,8 +72,11 @@ def open_image_file(input_filename: str) -> Tuple[np.ndarray, str, List]:
             input_ni = nib.four_to_three(input_ni)[0]
         input_array = input_ni.get_fdata()[:]
         input_specifics = [input_ni.affine, input_ni.header.get_zooms()]
-    elif ext in [".tif", ".tiff", ".png"]:
-        input_array = Image.open(input_filename)
+    elif ext in [".tif", ".tiff", ".png", ".ome.tif"]:
+        # input_array = Image.open(input_filename)
+        input_array = tif.imread(input_filename)
+        print(input_filename)
+        print(input_array.shape)
         input_specifics = [np.eye(4, dtype=int), [1., 1.]]
     else:
         logging.error("Working with an unknown file type: {}. Skipping...".format(ext))
